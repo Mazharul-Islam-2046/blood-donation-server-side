@@ -29,6 +29,12 @@ async function run() {
 
     // All Collections
     const userCollection = client.db("bloodDonation").collection("users");
+    const donationReqCollection = client.db("bloodDonation").collection("donationReq");
+
+
+
+
+
 
     // middlewares
     const verifyToken = (req, res, next) => {
@@ -83,7 +89,7 @@ async function run() {
   
   
   
-  
+  // User APIs-------------------------------
   
   
       // users Get API
@@ -200,7 +206,17 @@ async function run() {
       
       
       
-      
+
+
+
+  //Donation Request APIs ---------------------
+
+
+
+  app.get("/donationReqs", async (req, res) => {
+    const result = await donationReqCollection.find().toArray();
+    res.send(result);
+  });
       
       
       
