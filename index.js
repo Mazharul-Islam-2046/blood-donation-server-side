@@ -161,11 +161,32 @@ async function run() {
                 const result = await userCollection.updateOne(filter, updatedDoc);
                 res.send(result);
               })
+              
+              
+              
+              
+              
+            // Update a User status
+              app.patch('/users/status/:id', async (req, res) => {
+                  const id = req.params.id;
+                  const status = req.body.status;
+                  const filter = { _id: new ObjectId(id) };
+                  const updatedDoc = {
+                    $set: {
+                      status: status
+                    }
+                  }
+                  const result = await userCollection.updateOne(filter, updatedDoc);
+                  res.send(result);
+                })
 
-      
-      
-      
-      
+
+
+
+
+
+
+
           //   Delete USER API
           app.delete('/users/:id', verifyToken, verifyAdmin, async (req, res) => {
             const id = req.params.id;
