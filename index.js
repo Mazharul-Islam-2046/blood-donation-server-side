@@ -30,6 +30,8 @@ async function run() {
     // All Collections
     const userCollection = client.db("bloodDonation").collection("users");
     const donationReqCollection = client.db("bloodDonation").collection("donationReq");
+    const districtCollection = client.db("bloodDonation").collection("districts");
+    // const upazilaCollection = client.db("bloodDonation").collection("upazila");
 
 
 
@@ -63,6 +65,21 @@ async function run() {
         next();
       };
   
+
+
+
+
+      // use verify volunteer 
+      const verifyVolunteer = async (req, res, next) => {
+        const email = req.decoded.email;
+        const query = { email: email };
+        const user = await userCollection.findOne(query);
+        const isVolunteer = user?.role === "volunteer" || "admin";
+        if (!isVolunteer) {
+          return res.status(403).send({ message: "forbidden access" });
+        }
+        next();
+      };
   
   
   
@@ -217,6 +234,41 @@ async function run() {
     const result = await donationReqCollection.find().toArray();
     res.send(result);
   });
+
+
+
+
+
+
+  // Donation request satus update
+  app.patch('/donationReq/status/:id', verifyToken, verifyVolunteer, async (req, res) => {
+    const id = req.params.id;
+    const filter = { _id: new ObjectId(id) };
+    const updatedDoc = {
+      $set: {
+        status: "resolved"
+      }
+    }
+    const result = await donationReqCollection.updateOne(filter, updatedDoc);
+    res.send(result);
+  })
+
+
+
+
+
+
+
+
+
+  // District And Upazila API---------------------------------------------------
+
+  // District API
+  app.get("/districts", async (req, res) => {
+    const result = await districtCollection.find().toArray();
+    res.send(result);
+  });
+
       
       
       
@@ -238,7 +290,7 @@ async function run() {
     // await client.close();
   }
 }
-run().catch(console.dir);
+run().catch(console.dir);  
 
 app.get("/", (req, res) => {
   res.send("Blood Donation");
