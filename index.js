@@ -31,7 +31,7 @@ async function run() {
     const userCollection = client.db("bloodDonation").collection("users");
     const donationReqCollection = client.db("bloodDonation").collection("donationReq");
     const districtCollection = client.db("bloodDonation").collection("districts");
-    // const upazilaCollection = client.db("bloodDonation").collection("upazila");
+    const upazilaCollection = client.db("bloodDonation").collection("upazilas");
 
 
 
@@ -266,6 +266,16 @@ async function run() {
   // District API
   app.get("/districts", async (req, res) => {
     const result = await districtCollection.find().toArray();
+    res.send(result);
+  });
+
+
+
+
+
+  // Upazila API
+  app.get("/upazilas", async (req, res) => {
+    const result = await upazilaCollection.find().toArray();
     res.send(result);
   });
 
