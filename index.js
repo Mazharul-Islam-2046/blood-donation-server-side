@@ -222,6 +222,37 @@ async function run() {
 
 
 
+           // Update User Profile------------
+           app.patch('/users/:id', async (req, res) => {
+            const id = req.params.id;
+            const status = req.body.status;
+            const age = req.body.age;
+            const bloodGroup = req.body.bloodGroup;
+            const district = req.body.district;
+            const upazila = req.body.upazila;
+            const image = req.body.image;
+            const name = req.body.name;
+            const filter = { _id: new ObjectId(id) };
+            const updatedDoc = {
+              $set: {
+                name: name,
+                age: age,
+                bloodGroup: bloodGroup,
+                district: district,
+                upazila: upazila,
+                image: image,
+              }
+            }
+            const result = await userCollection.updateOne(filter, updatedDoc);
+            res.send(result);
+          })
+
+
+
+
+
+
+
 
           //   Delete USER API
           app.delete('/users/:id', verifyToken, verifyAdmin, async (req, res) => {
@@ -332,6 +363,10 @@ async function run() {
         {
           name: "All Donation Request",
           url: "/dashboard/all-blood-donation-request"
+        },
+        {
+          name: "Add Donation Request",
+          url: "/dashboard/addDonationRequest"
         },
         {
           name: "Add Blog",
