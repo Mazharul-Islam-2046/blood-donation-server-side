@@ -304,6 +304,93 @@ async function run() {
       
       
     
+
+
+
+
+
+
+
+
+
+
+
+  // Dashboard Menu API-----------------------------------
+
+
+
+  app.get("/menus/:email", async(req, res) => {
+        const adminmenu = [
+        {
+          name: "Dashboard",
+          url: "/dashboard"
+        },
+        {
+          name: "All Users",
+          url: "/dashboard/all-users"
+        },
+        {
+          name: "All Donation Request",
+          url: "/dashboard/all-blood-donation-request"
+        },
+        {
+          name: "Add Blog",
+          url: "/dashboard/content-management"
+        },
+        {
+          name: "Profile",
+          url: "/dashboard/profile"
+        }
+      ]
+
+      const volunteerMenu = [
+        {
+          name: "Dashboard",
+          url: "/dashboard"
+        },
+        {
+          name: "All Donation Request",
+          url: "/dashboard/all-blood-donation-request"
+        },
+        {
+          name: "Add Blog",
+          url: "/dashboard/content-management"
+        },
+        {
+          name: "Profile",
+          url: "/dashboard/profile"
+        }
+      ]
+
+      const donorMenu = [
+        {
+          name: "Dashboard",
+          url: "/dashboard"
+        },
+      ]
+        const email = req.params.email;
+        const query = { email: email };
+        const user = await userCollection.findOne(query);
+        const userRole = user?.role;
+        if (userRole === "admin") {
+          return res.send(adminmenu)
+        } else if (userRole === "volunteer") {
+          return res.send(volunteerMenu)
+        } else {
+          return res.send(donorMenu)
+        }
+  })
+
+
+
+  // User Role api--------------------------------------------------
+  app.get("/users/role/:email", async(req, res)=> {
+    const email = req.params.email
+    const query = { email: email };
+    const user = await userCollection.findOne(query);
+    userRole = user?.role;
+    res.send([userRole])
+  })
     
     
     
