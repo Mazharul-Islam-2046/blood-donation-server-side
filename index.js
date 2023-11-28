@@ -110,7 +110,7 @@ async function run() {
   
   
       // users Get API
-      app.get("/users", verifyToken, verifyAdmin, async (req, res) => {
+      app.get("/users", async (req, res) => {
         const result = await userCollection.find().toArray();
         res.send(result);
       });
