@@ -280,6 +280,14 @@ async function run() {
   });
 
 
+  app.delete('/donationReq/delete/:id', verifyToken, async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) }
+            const result = await donationReqCollection.deleteOne(query);
+            res.send(result);
+          })
+
+
 
   app.post("/addDonationReq", async(req, res)=>{
     const data = req.body;
@@ -293,12 +301,12 @@ async function run() {
 
 
   // Donation request satus update
-  app.patch('/donationReq/status/:id', verifyToken, verifyVolunteer, async (req, res) => {
+  app.patch('/donationReq/status/:id', verifyToken, async (req, res) => {
     const id = req.params.id;
     const filter = { _id: new ObjectId(id) };
     const updatedDoc = {
       $set: {
-        status: "resolved"
+        status: "done"
       }
     }
     const result = await donationReqCollection.updateOne(filter, updatedDoc);
