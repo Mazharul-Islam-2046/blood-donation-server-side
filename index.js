@@ -116,8 +116,6 @@ async function run() {
       });
 
 
-
-
       // user Get By Email API
       app.get("/users/:email", async (req, res) => {
         const email = req.params.email;
@@ -125,8 +123,6 @@ async function run() {
         const user = await userCollection.findOne(query);
         res.send(user)
       })
-  
-  
   
   
       // Is Admin API
@@ -166,32 +162,15 @@ async function run() {
   
     
     
-    
-    
-          //   Make New Volunteer API
-          app.patch('/users/admin/:id', verifyToken, verifyAdmin, async (req, res) => {
-              const id = req.params.id;
-              const filter = { _id: new ObjectId(id) };
-              const updatedDoc = {
-                $set: {
-                  role: 'volunteer'
-                }
-              }
-              const result = await userCollection.updateOne(filter, updatedDoc);
-              res.send(result);
-            })
 
-
-
-
-
-            // Block a User
-            app.patch('/users/admin/:id', verifyToken, verifyAdmin, async (req, res) => {
+            // Update a User status
+            app.patch('/users/status/:id', async (req, res) => {
                 const id = req.params.id;
+                const status = req.body.status;
                 const filter = { _id: new ObjectId(id) };
                 const updatedDoc = {
                   $set: {
-                    status: "blocked"
+                    status: status
                   }
                 }
                 const result = await userCollection.updateOne(filter, updatedDoc);
@@ -202,14 +181,14 @@ async function run() {
               
               
               
-            // Update a User status
-              app.patch('/users/status/:id', async (req, res) => {
+            // Update a User Role
+              app.patch('/users/role/:id', async (req, res) => {
                   const id = req.params.id;
-                  const status = req.body.status;
+                  const role = req.body.role;
                   const filter = { _id: new ObjectId(id) };
                   const updatedDoc = {
                     $set: {
-                      status: status
+                      role: role
                     }
                   }
                   const result = await userCollection.updateOne(filter, updatedDoc);
@@ -223,7 +202,7 @@ async function run() {
 
 
            // Update User Profile------------
-           app.patch('/users/:id', async (req, res) => {
+           app.patch('/users/:id', verifyToken, async (req, res) => {
             const id = req.params.id;
             const status = req.body.status;
             const age = req.body.age;
@@ -280,6 +259,27 @@ async function run() {
   });
 
 
+
+
+  app.get("/donationReqs/:id", async (req, res) => {
+    const id = req.params.id
+    const query = {_id: new ObjectId(id)}
+    const result = await donationReqCollection.findOne(query);
+    res.send(result);
+  });
+
+
+
+
+
+  app.get("/donationReqs/email/:email", async (req, res) => {
+    const email = req.params.email
+    const query = {requesterEmail: email}
+    const result = await donationReqCollection.find(query).toArray();
+    res.send(result);
+  });
+
+
   app.delete('/donationReq/delete/:id', verifyToken, async (req, res) => {
             const id = req.params.id;
             const query = { _id: new ObjectId(id) }
@@ -301,7 +301,7 @@ async function run() {
 
 
   // Donation request satus update
-  app.patch('/donationReq/status/:id', verifyToken, async (req, res) => {
+  app.patch('/donationReq/done/:id', verifyToken, async (req, res) => {
     const id = req.params.id;
     const filter = { _id: new ObjectId(id) };
     const updatedDoc = {
@@ -311,6 +311,51 @@ async function run() {
     }
     const result = await donationReqCollection.updateOne(filter, updatedDoc);
     res.send(result);
+  })
+  app.patch('/donationReq/canceled/:id', verifyToken, async (req, res) => {
+    const id = req.params.id;
+    const filter = { _id: new ObjectId(id) };
+    const updatedDoc = {
+      $set: {
+        status: "done"
+      }
+    }
+    const result = await donationReqCollection.updateOne(filter, updatedDoc);
+    res.send(result);
+  })
+
+
+
+
+  // Edit Req--------------------------------------
+  app.patch('/donationReq/edit/:id', verifyToken, async (req, res) => {
+    console.log("Hitted");
+    const id = req.params.id;
+    console.log(id);
+    const filter = { _id: new ObjectId(id) };
+    const recipentName = req.body.recipentName
+    const hospitalName = req.body.hospitalName
+    const addressName = req.body.addressName
+    const bloodGroup = req.body.bloodGroup
+    const recipentDistrict = req.body.recipentDistrict
+    const recipentUpazila = req.body.recipentUpazila
+    const donationDate = req.body.donationDate
+    console.log(id);
+    const updatedDoc = {
+      $set: {
+      recipentName,
+      hospitalName,
+      addressName,
+      bloodGroup,
+      recipentDistrict,
+      recipentUpazila,
+      donationDate,
+      }
+    }
+    console.log(updatedDoc);
+    const result = await donationReqCollection.updateOne(filter, updatedDoc);
+    res.send(result);
+    console.log(result);
   })
 
 
@@ -410,6 +455,14 @@ async function run() {
           name: "Dashboard",
           url: "/dashboard"
         },
+        {
+          name: "Add Donation Request",
+          url: "/dashboard/addDonationRequest"
+        },
+        {
+          name: "Profile",
+          url: "/dashboard/profile"
+        }
       ]
         const email = req.params.email;
         const query = { email: email };
