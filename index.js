@@ -301,28 +301,42 @@ async function run() {
 
 
   // Donation request satus update
-  app.patch('/donationReq/done/:id', verifyToken, async (req, res) => {
+  app.patch('/donationReq/inprogress/:id', async (req, res) => {
     const id = req.params.id;
+    const status = req.body.status;
+    const donorName = req.body.donorName;
+    const donorEmail = req.body.donorEmail;
     const filter = { _id: new ObjectId(id) };
     const updatedDoc = {
       $set: {
-        status: "done"
+        status: status,
+        donorName: donorName,
+        donorEmail: donorEmail
       }
     }
     const result = await donationReqCollection.updateOne(filter, updatedDoc);
     res.send(result);
   })
-  app.patch('/donationReq/canceled/:id', verifyToken, async (req, res) => {
+
+
+
+
+   // Donation request satus update after inprogress
+  app.patch('/donationReq/:id', async (req, res) => {
     const id = req.params.id;
+    const status = req.body.status;
     const filter = { _id: new ObjectId(id) };
     const updatedDoc = {
       $set: {
-        status: "done"
+        status: status,
       }
     }
     const result = await donationReqCollection.updateOne(filter, updatedDoc);
     res.send(result);
   })
+
+
+
 
 
 
@@ -454,6 +468,10 @@ async function run() {
         {
           name: "Dashboard",
           url: "/dashboard"
+        },
+        {
+          name: "All Donation Request",
+          url: "/dashboard/all-blood-donation-request"
         },
         {
           name: "Add Donation Request",
