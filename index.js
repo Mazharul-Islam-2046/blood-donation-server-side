@@ -32,6 +32,7 @@ async function run() {
     const donationReqCollection = client.db("bloodDonation").collection("donationReq");
     const districtCollection = client.db("bloodDonation").collection("districts");
     const upazilaCollection = client.db("bloodDonation").collection("upazilas");
+    const blogsCollection = client.db("bloodDonation").collection("blogs")
 
 
 
@@ -504,6 +505,78 @@ async function run() {
     const user = await userCollection.findOne(query);
     userRole = user?.role;
     res.send([userRole])
+  })
+
+
+
+
+
+  // Blog APIs---------------------------------------------------------------------------
+
+  
+  
+  // Blog Get API----------------------------------------------------------
+  app.get("/blogs", async (req, res) => {
+    const result = await blogsCollection.find().toArray();
+    res.send(result);
+  });
+  
+  
+  
+  // Blog Get by ID API ---------------------------------------------------
+  app.get("/blogs/:id", async(req, res)=> {
+    const id = req.params.id
+    const query = { _id: new ObjectId(id) };
+    const blog = await blogsCollection.findOne(query);
+    res.send(blog)
+  })
+  
+  
+  
+  
+  // Blog Post API--------------------------------------------------------
+  
+  app.post("/blogs/addBlogs", async(req, res)=>{
+    const data = req.body;
+    const result = await blogsCollection.insertOne(data);
+    res.send(result);
+  })
+
+
+
+
+
+
+  // Blogs Delete Method-----------------------------------------------
+  app.delete('/blogs/delete/:id', verifyToken, verifyAdmin, async (req, res) => {
+    const id = req.params.id;
+    const query = { _id: new ObjectId(id) }
+    const result = await donationReqCollection.deleteOne(query);
+    res.send(result);
+  })
+
+
+
+  // Blogs Update API---------------------------------------------------
+  app.patch('/blogs/update/:id', verifyToken, async (req, res) => {
+    const id = req.params.id;
+    console.log(id);
+    const filter = { _id: new ObjectId(id) };
+    const title = req.body.title
+    const blog = req.body.blog
+    const image = req.body.image
+    console.log(id);
+    const updatedDoc = {
+      $set: {
+      title,
+      blog,
+      image
+      }
+    }
+    console.log(updatedDoc);
+    const result = await blogsCollection.updateOne(filter, updatedDoc);
+    console.log(result);
+    res.send(result);
   })
     
     
