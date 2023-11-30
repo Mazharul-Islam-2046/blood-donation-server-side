@@ -585,7 +585,7 @@ async function run() {
 
 
   // Blogs Publish API---------
-  app.patch('/blogs/publish/:id', verifyToken, async (req, res) => {
+  app.patch('/blogs/publish/:id', verifyToken, verifyAdmin, async (req, res) => {
     const id = req.params.id;
     const filter = { _id: new ObjectId(id) };
     const updatedDoc = {
