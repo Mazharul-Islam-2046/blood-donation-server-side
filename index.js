@@ -551,7 +551,7 @@ async function run() {
   app.delete('/blogs/delete/:id', verifyToken, verifyAdmin, async (req, res) => {
     const id = req.params.id;
     const query = { _id: new ObjectId(id) }
-    const result = await donationReqCollection.deleteOne(query);
+    const result = await blogsCollection.deleteOne(query);
     res.send(result);
   })
 
@@ -576,6 +576,24 @@ async function run() {
     console.log(updatedDoc);
     const result = await blogsCollection.updateOne(filter, updatedDoc);
     console.log(result);
+    res.send(result);
+  })
+
+
+
+
+
+
+  // Blogs Publish API---------
+  app.patch('/blogs/publish/:id', verifyToken, async (req, res) => {
+    const id = req.params.id;
+    const filter = { _id: new ObjectId(id) };
+    const updatedDoc = {
+      $set: {
+      status: "publish"
+      }
+    }
+    const result = await blogsCollection.updateOne(filter, updatedDoc);
     res.send(result);
   })
     
